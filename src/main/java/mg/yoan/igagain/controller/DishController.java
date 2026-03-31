@@ -38,4 +38,12 @@ public class DishController {
     public ResponseEntity<Double> getDishCost(@PathVariable Integer id) {
         return ResponseEntity.ok(dishService.getDishCost(id));
     }
+
+    @GetMapping("/{id}/ingredients")
+    public ResponseEntity<List<mg.yoan.igagain.entity.Ingredient>> getIngredientsByDishId(
+            @PathVariable Integer id,
+            @RequestParam(required = false) String ingredientName,
+            @RequestParam(required = false) Double ingredientPriceAround) {
+        return ResponseEntity.ok(dishService.getIngredientsByDishId(id, ingredientName, ingredientPriceAround));
+    }
 }

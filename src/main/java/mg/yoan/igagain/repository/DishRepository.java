@@ -159,6 +159,52 @@ public class DishRepository {
         return dishIngredients;
     }
 
+    public List<Ingredient> findFilteredIngredientsByDishId(Integer dishId, String ingredientName, Double ingredientPriceAround) {
+        List<Ingredient> ingredients = new ArrayList<>();
+        StringBuilder sql = new StringBuilder(
+                """
+                        SELECT i.id, i.name, i.price, i.category
+                        FROM ingredient i
+                        JOIN dish_ingredient di ON di.id_ingredient = i.id
+                        WHERE di.id_dish = ?
+                        """
+        );
+
+        if (ingredientName != null && !ingredientName.trim().isEmpty()) {
+            sql.append(" AND i.name ILIKE ?");
+        }
+        if (ingredientPriceAround != null) {
+            sql.append(" AND i.price BETWEEN ? AND ?");
+        }
+
+        try (Connection connection = dataSource.getConnection()) {
+            PreparedStatement preparedStatement = connection.prepareStatement(sql.toString());
+            preparedStatement.setInt(1, dishId);
+
+            int paramIndex = 2;
+            if (ingredientName != null && !ingredientName.trim().isEmpty()) {
+                preparedStatement.setString(paramIndex++, "%" + ingredientName + "%");
+            }
+            if (ingredientPriceAround != null) {
+                preparedStatement.setDouble(paramIndex++, ingredientPriceAround - 50.0);
+                preparedStatement.setDouble(paramIndex++, ingredientPriceAround + 50.0);
+            }
+
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+                Ingredient ingredient = new Ingredient();
+                ingredient.setId(resultSet.getInt("id"));
+                ingredient.setName(resultSet.getString("name"));
+                ingredient.setPrice(resultSet.getDouble("price"));
+                ingredient.setCategory(CategoryEnum.valueOf(resultSet.getString("category")));
+                ingredients.add(ingredient);
+            }
+            return ingredients;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public Double getDishCost(Integer dishId) {
         if (dishId == null) {
             throw new IllegalArgumentException("dishId ne peut pas être null");

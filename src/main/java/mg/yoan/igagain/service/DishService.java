@@ -59,4 +59,9 @@ public class DishService {
         findDishById(id);
         return dishRepository.getDishCost(id);
     }
+
+    public List<Ingredient> getIngredientsByDishId(Integer id, String ingredientName, Double ingredientPriceAround) {
+        findDishById(id);
+        return dishRepository.findFilteredIngredientsByDishId(id, ingredientName, ingredientPriceAround);
+    }
 }
