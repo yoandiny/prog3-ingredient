@@ -160,10 +160,26 @@ public class DishRepository {
     }
 
     public Double getDishCost(Integer dishId) {
-        if(dishId == null) {
+        if (dishId == null) {
             throw new IllegalArgumentException("dishId ne peut pas être null");
         }
-        return 0.0;
+        String sql = """
+                SELECT SUM(di.required_quantity * i.price)
+                FROM dish_ingredient di
+                JOIN ingredient i ON di.id_ingredient = i.id
+                WHERE di.id_dish = ?
+                """;
+        try (Connection connection = dataSource.getConnection()) {
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setInt(1, dishId);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()) {
+                return resultSet.getDouble(1);
+            }
+            return 0.0;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public List<Dish> findAllDishes() {

@@ -54,4 +54,9 @@ public class DishService {
         dish.setDishIngredients(validIngredients);
         return dishRepository.saveDish(dish);
     }
+
+    public Double getDishCost(Integer id) {
+        findDishById(id);
+        return dishRepository.getDishCost(id);
+    }
 }

@@ -33,4 +33,9 @@ public class DishController {
         }
         return ResponseEntity.ok(dishService.updateDishIngredients(id, ingredients));
     }
+
+    @GetMapping("/{id}/cost")
+    public ResponseEntity<Double> getDishCost(@PathVariable Integer id) {
+        return ResponseEntity.ok(dishService.getDishCost(id));
+    }
 }

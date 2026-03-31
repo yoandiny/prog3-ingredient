@@ -37,4 +37,14 @@ public class IngredientController {
             @RequestParam("unit") Unit unit) {
         return ResponseEntity.ok(ingredientService.getIngredientStock(id, temporal, unit));
     }
+
+    @PostMapping
+    public ResponseEntity<Ingredient> saveIngredient(@RequestBody Ingredient toSave) {
+        return ResponseEntity.ok(ingredientService.saveIngredient(toSave));
+    }
+
+    @PostMapping("/batch")
+    public ResponseEntity<List<Ingredient>> createIngredients(@RequestBody List<Ingredient> newIngredients) {
+        return ResponseEntity.ok(ingredientService.createIngredients(newIngredients));
+    }
 }

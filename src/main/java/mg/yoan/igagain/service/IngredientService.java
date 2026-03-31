@@ -39,4 +39,12 @@ public class IngredientService {
         StockValue stockValue = ingredient.getStockValueAt(temporal);
         return stockValue;
     }
+
+    public Ingredient saveIngredient(Ingredient toSave) {
+        return ingredientRepository.saveIngredient(toSave);
+    }
+
+    public List<Ingredient> createIngredients(List<Ingredient> newIngredients) {
+        return ingredientRepository.createIngredients(newIngredients);
+    }
 }
