@@ -166,4 +166,30 @@ public class DishRepository {
         // Assuming DataRetriever originally threw a partial implementation, I will leave it empty as it was in the original snippet, or add a comment.
         return 0.0;
     }
+
+    public List<Dish> findAllDishes() {
+        List<Dish> dishes = new ArrayList<>();
+        try (Connection connection = dataSource.getConnection()) {
+            PreparedStatement preparedStatement = connection.prepareStatement(
+                    """
+                            select dish.id as dish_id, dish.name as dish_name, dish_type, dish.selling_price as dish_price
+                            from dish
+                            """);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+                Dish dish = new Dish();
+                int id = resultSet.getInt("dish_id");
+                dish.setId(id);
+                dish.setName(resultSet.getString("dish_name"));
+                dish.setDishType(DishTypeEnum.valueOf(resultSet.getString("dish_type")));
+                dish.setPrice(resultSet.getObject("dish_price") == null
+                        ? null : resultSet.getDouble("dish_price"));
+                dish.setDishIngredients(findIngredientByDishId(connection, id));
+                dishes.add(dish);
+            }
+            return dishes;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

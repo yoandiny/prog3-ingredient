@@ -170,4 +170,22 @@ public class IngredientRepository {
             throw new RuntimeException(e);
         }
     }
+
+    public List<Ingredient> findAllIngredients() {
+        List<Ingredient> ingredients = new ArrayList<>();
+        try (Connection connection = dataSource.getConnection()) {
+            PreparedStatement preparedStatement = connection.prepareStatement("select id, name, price, category from ingredient order by id;");
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+                int idIngredient = resultSet.getInt("id");
+                String name = resultSet.getString("name");
+                CategoryEnum category = CategoryEnum.valueOf(resultSet.getString("category"));
+                Double price = resultSet.getDouble("price");
+                ingredients.add(new Ingredient(idIngredient, name, category, price, findStockMovementsByIngredientId(connection, idIngredient)));
+            }
+            return ingredients;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }
