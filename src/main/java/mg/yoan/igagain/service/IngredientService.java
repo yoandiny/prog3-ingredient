@@ -37,8 +37,6 @@ public class IngredientService {
     public StockValue getIngredientStock(Integer id, Instant temporal, Unit unit) {
         Ingredient ingredient = findIngredientById(id);
         StockValue stockValue = ingredient.getStockValueAt(temporal);
-        // Note : L'énoncé demande de vérifier si 'at' et 'unit' sont présents, ce qui est géré par les annotations du Controller.
-        // On pourrait aussi ajouter une logique ici si l'unité differe, mais aucune règle de conversion n'est spécifiée.
         return stockValue;
     }
 }

@@ -21,7 +21,6 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(MissingServletRequestParameterException.class)
     public ResponseEntity<String> handleMissingParams(MissingServletRequestParameterException ex) {
-        // Personnalisation du message si at ou unit manquent
         String name = ex.getParameterName();
         if ("at".equals(name) || "unit".equals(name)) {
             return new ResponseEntity<>("Either mandatory query parameter `at` or `unit` is not provided.", HttpStatus.BAD_REQUEST);

@@ -40,12 +40,10 @@ public class DishService {
     public Dish updateDishIngredients(Integer dishId, List<DishIngredient> newIngredients) {
         Dish dish = findDishById(dishId);
         
-        // On récupère tous les ID d'ingrédients de la BDD pour ignorer ceux qui n'existent pas
         List<Integer> existingIngredientIds = ingredientRepository.findAllIngredients().stream()
                 .map(Ingredient::getId)
                 .toList();
 
-        // On filtre la liste envoyée pour ne garder que ceux qui existent
         List<DishIngredient> validIngredients = newIngredients.stream()
                 .filter(di -> di.getIngredient() != null 
                            && di.getIngredient().getId() != null 

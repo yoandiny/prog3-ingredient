@@ -163,7 +163,6 @@ public class DishRepository {
         if(dishId == null) {
             throw new IllegalArgumentException("dishId ne peut pas être null");
         }
-        // Assuming DataRetriever originally threw a partial implementation, I will leave it empty as it was in the original snippet, or add a comment.
         return 0.0;
     }
 
