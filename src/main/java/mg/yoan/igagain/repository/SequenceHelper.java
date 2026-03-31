@@ -46,8 +46,12 @@ public class SequenceHelper {
 
     public void updateSequenceNextValue(Connection conn, String tableName, String columnName, String sequenceName) throws SQLException {
         String setValSql = String.format(
-                "SELECT setval('%s', (SELECT COALESCE(MAX(%s), 0) FROM %s))",
-                sequenceName, columnName, tableName
+                """
+                SELECT setval('%s', 
+                              COALESCE((SELECT MAX(%s) FROM %s), 1), 
+                              (SELECT MAX(%s) FROM %s) IS NOT NULL)
+                """,
+                sequenceName, columnName, tableName, columnName, tableName
         );
         try (PreparedStatement ps = conn.prepareStatement(setValSql)) {
             ps.executeQuery();

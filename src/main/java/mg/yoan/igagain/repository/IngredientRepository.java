@@ -22,7 +22,7 @@ public class IngredientRepository {
     public Ingredient saveIngredient(Ingredient toSave) {
         String upsertIngredientSql = """
                     INSERT INTO ingredient (id, name, price, category)
-                    VALUES (?, ?, ?, ?::dish_type)
+                    VALUES (?, ?, ?, ?::ingredient_category)
                     ON CONFLICT (id) DO UPDATE
                     SET name = EXCLUDED.name,
                         category = EXCLUDED.category,
@@ -38,12 +38,12 @@ public class IngredientRepository {
                 } else {
                     ps.setInt(1, sequenceHelper.getNextSerialValue(conn, "ingredient", "id"));
                 }
+                ps.setString(2, toSave.getName());
                 if (toSave.getPrice() != null) {
-                    ps.setDouble(2, toSave.getPrice());
+                    ps.setDouble(3, toSave.getPrice());
                 } else {
-                    ps.setNull(2, Types.DOUBLE);
+                    ps.setNull(3, Types.DOUBLE);
                 }
-                ps.setString(3, toSave.getName());
                 ps.setString(4, toSave.getCategory().name());
                 try (ResultSet rs = ps.executeQuery()) {
                     rs.next();
@@ -71,8 +71,8 @@ public class IngredientRepository {
         try {
             PreparedStatement preparedStatement = conn.prepareStatement(sql);
             for (StockMovement stockMovement : stockMovementList) {
-                if (ingredient.getId() != null) {
-                    preparedStatement.setInt(1, ingredient.getId());
+                if (stockMovement.getId() != null) {
+                    preparedStatement.setInt(1, stockMovement.getId());
                 } else {
                     preparedStatement.setInt(1, sequenceHelper.getNextSerialValue(conn, "stock_movement", "id"));
                 }
